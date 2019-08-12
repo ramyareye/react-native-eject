@@ -12,6 +12,7 @@
     "android",
     "ios"
   ],
+  "homepage": "https://github.com/ramyareye/react-native-eject",
   "author": {
     "name": "Reza Babaei",
     "email": "ramyariran@gmail.com"
