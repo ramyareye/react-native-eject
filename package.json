@@ -1,0 +1,27 @@
+{
+  "name": "react-native-eject",
+  "version": "0.1.0",
+  "description": "Single command to eject a React Native app",
+  "main": "index.js",
+  "scripts": {
+    "build": "NODE_ENV=production babel ./eject.js -d ./build"
+  },
+  "keywords": [
+    "react-native",
+    "react-native-eject",
+    "android",
+    "ios"
+  ],
+  "author": {
+    "name": "Reza Babaei",
+    "email": "ramyariran@gmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-2": "^6.24.1"
+  }
+}
