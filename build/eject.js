@@ -16,9 +16,7 @@ var _copyProjectTemplateAndReplace = require('@react-native-community/cli/build/
 
 var _copyProjectTemplateAndReplace2 = _interopRequireDefault(_copyProjectTemplateAndReplace);
 
-var _logger = require('@react-native-community/cli/build/tools/logger');
-
-var _logger2 = _interopRequireDefault(_logger);
+var _cliTools = require('@react-native-community/cli-tools');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -46,7 +44,7 @@ function eject() {
   var doesIOSExist = _fs2.default.existsSync(_path2.default.resolve('ios'));
   var doesAndroidExist = _fs2.default.existsSync(_path2.default.resolve('android'));
   if (doesIOSExist && doesAndroidExist) {
-    _logger2.default.error('Both the iOS and Android folders already exist! Please delete `ios` and/or `android` ' + 'before ejecting.');
+    _cliTools.logger.error('Both the iOS and Android folders already exist! Please delete `ios` and/or `android` ' + 'before ejecting.');
     process.exit(1);
   }
 
@@ -54,31 +52,31 @@ function eject() {
   try {
     appConfig = require(_path2.default.resolve('app.json'));
   } catch (e) {
-    _logger2.default.error('Eject requires an `app.json` config file to be located at ' + (_path2.default.resolve('app.json') + ', and it must at least specify a `name` for the project ') + "name, and a `displayName` for the app's home screen label.");
+    _cliTools.logger.error('Eject requires an `app.json` config file to be located at ' + (_path2.default.resolve('app.json') + ', and it must at least specify a `name` for the project ') + "name, and a `displayName` for the app's home screen label.");
     process.exit(1);
   }
 
   var appName = appConfig.name;
   if (!appName) {
-    _logger2.default.error('App `name` must be defined in the `app.json` config file to define the project name. ' + 'It must not contain any spaces or dashes.');
+    _cliTools.logger.error('App `name` must be defined in the `app.json` config file to define the project name. ' + 'It must not contain any spaces or dashes.');
     process.exit(1);
   }
 
   var displayName = appConfig.displayName;
   if (!displayName) {
-    _logger2.default.error('App `displayName` must be defined in the `app.json` config file, to define the label ' + 'of the app on the home screen.');
+    _cliTools.logger.error('App `displayName` must be defined in the `app.json` config file, to define the label ' + 'of the app on the home screen.');
     process.exit(1);
   }
 
   var templateOptions = { displayName: displayName };
 
   if (!doesIOSExist) {
-    _logger2.default.info('Generating the iOS folder.');
+    _cliTools.logger.info('Generating the iOS folder.');
     (0, _copyProjectTemplateAndReplace2.default)(_path2.default.resolve('node_modules', 'react-native', 'template', 'ios'), _path2.default.resolve('ios'), appName, templateOptions);
   }
 
   if (!doesAndroidExist) {
-    _logger2.default.info('Generating the Android folder.');
+    _cliTools.logger.info('Generating the Android folder.');
     (0, _copyProjectTemplateAndReplace2.default)(_path2.default.resolve('node_modules', 'react-native', 'template', 'android'), _path2.default.resolve('android'), appName, templateOptions);
   }
 }

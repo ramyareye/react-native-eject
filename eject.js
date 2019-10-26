@@ -10,7 +10,7 @@
 import path from 'path';
 import fs from 'fs';
 import copyProjectTemplateAndReplace from '@react-native-community/cli/build/tools/generator/copyProjectTemplateAndReplace';
-import logger from '@react-native-community/cli/build/tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 /**
  * The eject command re-creates the `android` and `ios` native folders. Because native code can be
