@@ -6,6 +6,10 @@
   "scripts": {
     "build": "NODE_ENV=production babel ./eject.js -d ./build"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ramyareye/react-native-eject.git"
+  },
   "keywords": [
     "react-native",
     "react-native-eject",
