@@ -7,10 +7,13 @@
  * @format
  */
 
+// recovered from https://github.com/react-native-community/cli/pull/275
+
 import path from 'path';
 import fs from 'fs';
-import copyProjectTemplateAndReplace from '@react-native-community/cli/build/tools/generator/copyProjectTemplateAndReplace';
-import {logger} from '@react-native-community/cli-tools';
+import { logger } from '@react-native-community/cli-tools';
+
+import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace.js';
 
 /**
  * The eject command re-creates the `android` and `ios` native folders. Because native code can be
@@ -40,9 +43,7 @@ function eject() {
   } catch (e) {
     logger.error(
       'Eject requires an `app.json` config file to be located at ' +
-        `${path.resolve(
-          'app.json',
-        )}, and it must at least specify a \`name\` for the project ` +
+        `${path.resolve('app.json')}, and it must at least specify a \`name\` for the project ` +
         "name, and a `displayName` for the app's home screen label.",
     );
     process.exit(1);
@@ -66,7 +67,7 @@ function eject() {
     process.exit(1);
   }
 
-  const templateOptions = {displayName};
+  const templateOptions = { displayName };
 
   if (!doesIOSExist) {
     logger.info('Generating the iOS folder.');
