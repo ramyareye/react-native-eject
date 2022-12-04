@@ -12,13 +12,13 @@
 // Simplified version of:
 // https://github.com/0x00A/prompt-sync/blob/master/index.js
 
-import * as fs from "fs";
+import * as fs from 'fs';
 
 type Options = {
   echo?: string;
   ask?: string;
   value?: string;
-  autocomplete?: string[] | Function;
+  autocomplete?: string[] | (() => void);
 };
 
 const term = 13; // carriage return
@@ -26,31 +26,26 @@ const term = 13; // carriage return
 function create() {
   return prompt;
 
-  function prompt(
-    ask?: string | Options,
-    value?: string | Options,
-    opts?: Options
-  ) {
+  function prompt(ask?: string | Options, value?: string | Options, opts?: Options) {
     let insert = 0;
     opts = opts || {};
 
-    if (typeof ask === "object") {
+    if (typeof ask === 'object') {
       opts = ask;
       ask = opts.ask;
-    } else if (typeof value === "object") {
+    } else if (typeof value === 'object') {
       opts = value;
       value = opts.value;
     }
-    ask = ask || "";
+    ask = ask || '';
     const echo = opts.echo;
-    const masked = "echo" in opts;
+    const masked = 'echo' in opts;
 
     let fd;
-    if (process.platform === "win32") {
-      // @ts-ignore
+    if (process.platform === 'win32') {
       fd = process.stdin.fd;
     } else {
-      fd = fs.openSync("/dev/tty", "rs");
+      fd = fs.openSync('/dev/tty', 'rs');
     }
 
     const wasRaw = process.stdin.isRaw;
@@ -59,7 +54,7 @@ function create() {
     }
 
     let buf = Buffer.alloc(3);
-    let str = "";
+    let str = '';
 
     let character;
 
@@ -69,13 +64,14 @@ function create() {
       process.stdout.write(ask);
     }
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       read = fs.readSync(fd, buf, 0, 3, null);
       if (read > 1) {
         // received a control sequence
         if (buf.toString()) {
           str += buf.toString();
-          str = str.replace(/\0/g, "");
+          str = str.replace(/\0/g, '');
           insert = str.length;
           process.stdout.write(`\u001b[2K\u001b[0G${ask}${str}`);
           process.stdout.write(`\u001b[${insert + ask.length + 1}G`);
@@ -89,10 +85,11 @@ function create() {
 
       // catch a ^C and return null
       if (character === 3) {
-        process.stdout.write("^C\n");
+        process.stdout.write('^C\n');
         fs.closeSync(fd);
         process.exit(130);
         if (process.stdin.setRawMode) {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           process.stdin.setRawMode!(!!wasRaw);
         }
         return null;
@@ -104,55 +101,45 @@ function create() {
         break;
       }
 
-      if (
-        character === 127 ||
-        (process.platform === "win32" && character === 8)
-      ) {
+      if (character === 127 || (process.platform === 'win32' && character === 8)) {
         // backspace
         if (!insert) {
           continue;
         }
         str = str.slice(0, insert - 1) + str.slice(insert);
         insert--;
-        process.stdout.write("\u001b[2D");
+        process.stdout.write('\u001b[2D');
       } else {
         if (character < 32 || character > 126) {
           continue;
         }
-        str =
-          str.slice(0, insert) +
-          String.fromCharCode(character) +
-          str.slice(insert);
+        str = str.slice(0, insert) + String.fromCharCode(character) + str.slice(insert);
         insert++;
       }
 
       if (masked) {
-        process.stdout.write(
-          `\u001b[2K\u001b[0G${ask}${Array(str.length + 1).join(echo)}`
-        );
+        process.stdout.write(`\u001b[2K\u001b[0G${ask}${Array(str.length + 1).join(echo)}`);
       } else {
-        process.stdout.write("\u001b[s");
+        process.stdout.write('\u001b[s');
         if (insert === str.length) {
           process.stdout.write(`\u001b[2K\u001b[0G${ask}${str}`);
         } else if (ask) {
           process.stdout.write(`\u001b[2K\u001b[0G${ask}${str}`);
         } else {
-          process.stdout.write(
-            `\u001b[2K\u001b[0G${str}\u001b[${str.length - insert}D`
-          );
+          process.stdout.write(`\u001b[2K\u001b[0G${str}\u001b[${str.length - insert}D`);
         }
-        process.stdout.write("\u001b[u");
-        process.stdout.write("\u001b[1C");
+        process.stdout.write('\u001b[u');
+        process.stdout.write('\u001b[1C');
       }
     }
 
-    process.stdout.write("\n");
+    process.stdout.write('\n');
 
     if (process.stdin.setRawMode) {
       process.stdin.setRawMode(!!wasRaw);
     }
 
-    return str || value || "";
+    return str || value || '';
   }
 }
 

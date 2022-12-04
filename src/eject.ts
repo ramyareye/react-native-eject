@@ -9,11 +9,11 @@
 
 // recovered from https://github.com/react-native-community/cli/pull/275
 
-import path from "path";
-import fs from "fs";
-import { logger } from "@react-native-community/cli-tools";
+import path from 'path';
+import fs from 'fs';
+import { logger } from '@react-native-community/cli-tools';
 
-import copyProjectTemplateAndReplace from "./copyProjectTemplateAndReplace.js";
+import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace.js';
 
 /**
  * The eject command re-creates the `android` and `ios` native folders. Because native code can be
@@ -27,26 +27,24 @@ import copyProjectTemplateAndReplace from "./copyProjectTemplateAndReplace.js";
  */
 
 function eject() {
-  const doesIOSExist = fs.existsSync(path.resolve("ios"));
-  const doesAndroidExist = fs.existsSync(path.resolve("android"));
+  const doesIOSExist = fs.existsSync(path.resolve('ios'));
+  const doesAndroidExist = fs.existsSync(path.resolve('android'));
   if (doesIOSExist && doesAndroidExist) {
     logger.error(
-      "Both the iOS and Android folders already exist! Please delete `ios` and/or `android` " +
-        "before ejecting."
+      'Both the iOS and Android folders already exist! Please delete `ios` and/or `android` ' +
+        'before ejecting.',
     );
     process.exit(1);
   }
 
   let appConfig = null;
   try {
-    appConfig = require(path.resolve("app.json"));
+    appConfig = require(path.resolve('app.json'));
   } catch (e) {
     logger.error(
-      "Eject requires an `app.json` config file to be located at " +
-        `${path.resolve(
-          "app.json"
-        )}, and it must at least specify a \`name\` for the project ` +
-        "name, and a `displayName` for the app's home screen label."
+      'Eject requires an `app.json` config file to be located at ' +
+        `${path.resolve('app.json')}, and it must at least specify a \`name\` for the project ` +
+        "name, and a `displayName` for the app's home screen label.",
     );
     process.exit(1);
   }
@@ -54,8 +52,8 @@ function eject() {
   const appName = appConfig.name;
   if (!appName) {
     logger.error(
-      "App `name` must be defined in the `app.json` config file to define the project name. " +
-        "It must not contain any spaces or dashes."
+      'App `name` must be defined in the `app.json` config file to define the project name. ' +
+        'It must not contain any spaces or dashes.',
     );
     process.exit(1);
   }
@@ -63,8 +61,8 @@ function eject() {
   const displayName = appConfig.displayName;
   if (!displayName) {
     logger.error(
-      "App `displayName` must be defined in the `app.json` config file, to define the label " +
-        "of the app on the home screen."
+      'App `displayName` must be defined in the `app.json` config file, to define the label ' +
+        'of the app on the home screen.',
     );
     process.exit(1);
   }
@@ -72,29 +70,29 @@ function eject() {
   const templateOptions = { displayName };
 
   if (!doesIOSExist) {
-    logger.info("Generating the iOS folder.");
+    logger.info('Generating the iOS folder.');
     copyProjectTemplateAndReplace(
-      path.resolve("node_modules", "react-native", "template", "ios"),
-      path.resolve("ios"),
+      path.resolve('node_modules', 'react-native', 'template', 'ios'),
+      path.resolve('ios'),
       appName,
-      templateOptions
+      templateOptions,
     );
   }
 
   if (!doesAndroidExist) {
-    logger.info("Generating the Android folder.");
+    logger.info('Generating the Android folder.');
     copyProjectTemplateAndReplace(
-      path.resolve("node_modules", "react-native", "template", "android"),
-      path.resolve("android"),
+      path.resolve('node_modules', 'react-native', 'template', 'android'),
+      path.resolve('android'),
       appName,
-      templateOptions
+      templateOptions,
     );
   }
 }
 
 export default {
-  name: "eject",
-  description: "Re-create the iOS and Android folders and native code",
+  name: 'eject',
+  description: 'Re-create the iOS and Android folders and native code',
   func: eject(),
   options: [],
 };

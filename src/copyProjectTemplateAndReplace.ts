@@ -9,16 +9,16 @@
 
 // recovered from https://github.com/react-native-community/cli/pull/1644
 
-import chalk from "chalk";
-import * as path from "path";
-import copyAndReplace from "./copyAndReplace";
-import promptInitializer from "./promptSync";
-import walk from "@react-native-community/cli/build/tools/walk";
-import { logger } from "@react-native-community/cli-tools";
+import chalk from 'chalk';
+import * as path from 'path';
+import copyAndReplace from './copyAndReplace';
+import promptInitializer from './promptSync';
+import walk from '@react-native-community/cli/build/tools/walk';
+import { logger } from '@react-native-community/cli-tools';
 
 const prompt = promptInitializer();
 
-type ContentChangedCallbackOption = "identical" | "changed" | "new" | null;
+type ContentChangedCallbackOption = 'identical' | 'changed' | 'new' | null;
 
 type Options = {
   upgrade?: boolean;
@@ -45,16 +45,16 @@ function copyProjectTemplateAndReplace(
   srcPath: string,
   destPath: string,
   newProjectName: string,
-  options: Options = {}
+  options: Options = {},
 ) {
   if (!srcPath) {
-    throw new Error("Need a path to copy from");
+    throw new Error('Need a path to copy from');
   }
   if (!destPath) {
-    throw new Error("Need a path to copy to");
+    throw new Error('Need a path to copy to');
   }
   if (!newProjectName) {
-    throw new Error("Need a project name");
+    throw new Error('Need a project name');
   }
 
   walk(srcPath).forEach((absoluteSrcFilePath: string) => {
@@ -63,23 +63,21 @@ function copyProjectTemplateAndReplace(
       // Don't upgrade these files
       const fileName = path.basename(absoluteSrcFilePath);
       // This also includes __tests__/index.*.js
-      if (fileName === "index.ios.js") {
+      if (fileName === 'index.ios.js') {
         return;
       }
-      if (fileName === "index.android.js") {
+      if (fileName === 'index.android.js') {
         return;
       }
-      if (fileName === "index.js") {
+      if (fileName === 'index.js') {
         return;
       }
-      if (fileName === "App.js") {
+      if (fileName === 'App.js') {
         return;
       }
     }
 
-    const relativeFilePath = translateFilePath(
-      path.relative(srcPath, absoluteSrcFilePath)
-    )
+    const relativeFilePath = translateFilePath(path.relative(srcPath, absoluteSrcFilePath))
       .replace(/HelloWorld/g, newProjectName)
       .replace(/helloworld/g, newProjectName.toLowerCase());
 
@@ -89,13 +87,9 @@ function copyProjectTemplateAndReplace(
     // - Docs specific to the template (.md files)
     if (options.ignorePaths) {
       if (!Array.isArray(options.ignorePaths)) {
-        throw new Error("options.ignorePaths must be an array");
+        throw new Error('options.ignorePaths must be an array');
       }
-      if (
-        options.ignorePaths.some(
-          (ignorePath) => ignorePath === relativeFilePath
-        )
-      ) {
+      if (options.ignorePaths.some((ignorePath) => ignorePath === relativeFilePath)) {
         // Skip copying this file
         return;
       }
@@ -103,25 +97,18 @@ function copyProjectTemplateAndReplace(
 
     let contentChangedCallback = null;
     if (options.upgrade && !options.force) {
-      contentChangedCallback = (
-        _destPath: string,
-        contentChanged: ContentChangedCallbackOption
-      ) =>
-        upgradeFileContentChangedCallback(
-          absoluteSrcFilePath,
-          relativeFilePath,
-          contentChanged
-        );
+      contentChangedCallback = (_destPath: string, contentChanged: ContentChangedCallbackOption) =>
+        upgradeFileContentChangedCallback(absoluteSrcFilePath, relativeFilePath, contentChanged);
     }
     copyAndReplace(
       absoluteSrcFilePath,
       path.resolve(destPath, relativeFilePath),
       {
-        "Hello App Display Name": options.displayName || newProjectName,
+        'Hello App Display Name': options.displayName || newProjectName,
         HelloWorld: newProjectName,
         helloworld: newProjectName.toLowerCase(),
       },
-      contentChangedCallback
+      contentChangedCallback,
     );
   });
 }
@@ -139,55 +126,53 @@ function translateFilePath(filePath: string) {
     return filePath;
   }
   return filePath
-    .replace("_BUCK", "BUCK")
-    .replace("_gitignore", ".gitignore")
-    .replace("_gitattributes", ".gitattributes")
-    .replace("_babelrc", ".babelrc")
-    .replace("_editorconfig", ".editorconfig")
-    .replace("_eslintrc.js", ".eslintrc.js")
-    .replace("_flowconfig", ".flowconfig")
-    .replace("_buckconfig", ".buckconfig")
-    .replace("_prettierrc.js", ".prettierrc.js")
-    .replace("_bundle", ".bundle")
-    .replace("_ruby-version", ".ruby-version")
-    .replace("_node-version", ".node-version")
-    .replace("_watchmanconfig", ".watchmanconfig")
-    .replace("_xcode.env", ".xcode.env");
+    .replace('_BUCK', 'BUCK')
+    .replace('_gitignore', '.gitignore')
+    .replace('_gitattributes', '.gitattributes')
+    .replace('_babelrc', '.babelrc')
+    .replace('_editorconfig', '.editorconfig')
+    .replace('_eslintrc.js', '.eslintrc.js')
+    .replace('_flowconfig', '.flowconfig')
+    .replace('_buckconfig', '.buckconfig')
+    .replace('_prettierrc.js', '.prettierrc.js')
+    .replace('_bundle', '.bundle')
+    .replace('_ruby-version', '.ruby-version')
+    .replace('_node-version', '.node-version')
+    .replace('_watchmanconfig', '.watchmanconfig')
+    .replace('_xcode.env', '.xcode.env');
 }
 
 function upgradeFileContentChangedCallback(
   absoluteSrcFilePath: string,
   relativeDestPath: string,
-  contentChanged: ContentChangedCallbackOption
+  contentChanged: ContentChangedCallbackOption,
 ) {
-  if (contentChanged === "new") {
-    logger.info(`${chalk.bold("new")} ${relativeDestPath}`);
-    return "overwrite";
+  if (contentChanged === 'new') {
+    logger.info(`${chalk.bold('new')} ${relativeDestPath}`);
+    return 'overwrite';
   }
-  if (contentChanged === "changed") {
+  if (contentChanged === 'changed') {
     logger.info(
       `${chalk.bold(relativeDestPath)} ` +
         `has changed in the new version.\nDo you want to keep your ${relativeDestPath} or replace it with the ` +
-        "latest version?\nIf you ever made any changes " +
+        'latest version?\nIf you ever made any changes ' +
         "to this file, you'll probably want to keep it.\n" +
         `You can see the new version here: ${absoluteSrcFilePath}\n` +
         `Do you want to replace ${relativeDestPath}? ` +
-        "Answer y to replace, n to keep your version: "
+        'Answer y to replace, n to keep your version: ',
     );
     const answer = prompt();
-    if (answer === "y") {
+    if (answer === 'y') {
       logger.info(`Replacing ${relativeDestPath}`);
-      return "overwrite";
+      return 'overwrite';
     }
     logger.info(`Keeping your ${relativeDestPath}`);
-    return "keep";
+    return 'keep';
   }
-  if (contentChanged === "identical") {
-    return "keep";
+  if (contentChanged === 'identical') {
+    return 'keep';
   }
-  throw new Error(
-    `Unknown file changed state: ${relativeDestPath}, ${contentChanged}`
-  );
+  throw new Error(`Unknown file changed state: ${relativeDestPath}, ${contentChanged}`);
 }
 
 export default copyProjectTemplateAndReplace;

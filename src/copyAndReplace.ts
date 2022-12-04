@@ -9,13 +9,13 @@
 
 // recovered from https://github.com/react-native-community/cli/pull/1644
 
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Binary files, don't process these (avoid decoding as utf8)
-const binaryExtensions = [".png", ".jar", ".keystore"];
+const binaryExtensions = ['.png', '.jar', '.keystore'];
 
-type ContentChangedCallbackOption = "identical" | "changed" | "new" | null;
+type ContentChangedCallbackOption = 'identical' | 'changed' | 'new' | null;
 
 /**
  * Copy a file to given destination, replacing parts of its contents.
@@ -34,11 +34,8 @@ function copyAndReplace(
   destPath: string,
   replacements: Record<string, string>,
   contentChangedCallback:
-    | ((
-        path: string,
-        option: ContentChangedCallbackOption
-      ) => "keep" | "overwrite")
-    | null
+    | ((path: string, option: ContentChangedCallbackOption) => 'keep' | 'overwrite')
+    | null,
 ) {
   if (fs.lstatSync(srcPath).isDirectory()) {
     if (!fs.existsSync(destPath)) {
@@ -51,25 +48,25 @@ function copyAndReplace(
   const extension = path.extname(srcPath);
   if (binaryExtensions.indexOf(extension) !== -1) {
     // Binary file
-    let shouldOverwrite = "overwrite";
+    let shouldOverwrite = 'overwrite';
     if (contentChangedCallback) {
       const newContentBuffer = fs.readFileSync(srcPath);
-      let contentChanged: ContentChangedCallbackOption = "identical";
+      let contentChanged: ContentChangedCallbackOption = 'identical';
       try {
         const origContentBuffer = fs.readFileSync(destPath);
         if (Buffer.compare(origContentBuffer, newContentBuffer) !== 0) {
-          contentChanged = "changed";
+          contentChanged = 'changed';
         }
       } catch (err: any) {
-        if (err.code === "ENOENT") {
-          contentChanged = "new";
+        if (err.code === 'ENOENT') {
+          contentChanged = 'new';
         } else {
           throw err;
         }
       }
       shouldOverwrite = contentChangedCallback(destPath, contentChanged);
     }
-    if (shouldOverwrite === "overwrite") {
+    if (shouldOverwrite === 'overwrite') {
       copyBinaryFile(srcPath, destPath, (err) => {
         if (err) {
           throw err;
@@ -79,33 +76,33 @@ function copyAndReplace(
   } else {
     // Text file
     const srcPermissions = fs.statSync(srcPath).mode;
-    let content = fs.readFileSync(srcPath, "utf8");
+    let content = fs.readFileSync(srcPath, 'utf8');
     Object.keys(replacements).forEach((regex) => {
-      content = content.replace(new RegExp(regex, "g"), replacements[regex]);
+      content = content.replace(new RegExp(regex, 'g'), replacements[regex]);
     });
 
-    let shouldOverwrite = "overwrite";
+    let shouldOverwrite = 'overwrite';
     if (contentChangedCallback) {
       // Check if contents changed and ask to overwrite
-      let contentChanged: ContentChangedCallbackOption = "identical";
+      let contentChanged: ContentChangedCallbackOption = 'identical';
       try {
-        const origContent = fs.readFileSync(destPath, "utf8");
+        const origContent = fs.readFileSync(destPath, 'utf8');
         if (content !== origContent) {
           // logger.info('Content changed: ' + destPath);
-          contentChanged = "changed";
+          contentChanged = 'changed';
         }
       } catch (err: any) {
-        if (err.code === "ENOENT") {
-          contentChanged = "new";
+        if (err.code === 'ENOENT') {
+          contentChanged = 'new';
         } else {
           throw err;
         }
       }
       shouldOverwrite = contentChangedCallback(destPath, contentChanged);
     }
-    if (shouldOverwrite === "overwrite") {
+    if (shouldOverwrite === 'overwrite') {
       fs.writeFileSync(destPath, content, {
-        encoding: "utf8",
+        encoding: 'utf8',
         mode: srcPermissions,
       });
     }
@@ -115,24 +112,20 @@ function copyAndReplace(
 /**
  * Same as 'cp' on Unix. Don't do any replacements.
  */
-function copyBinaryFile(
-  srcPath: string,
-  destPath: string,
-  cb: (err?: Error) => void
-) {
+function copyBinaryFile(srcPath: string, destPath: string, cb: (err?: Error) => void) {
   let cbCalled = false;
   const srcPermissions = fs.statSync(srcPath).mode;
   const readStream = fs.createReadStream(srcPath);
-  readStream.on("error", (err) => {
+  readStream.on('error', (err) => {
     done(err);
   });
   const writeStream = fs.createWriteStream(destPath, {
     mode: srcPermissions,
   });
-  writeStream.on("error", (err) => {
+  writeStream.on('error', (err) => {
     done(err);
   });
-  writeStream.on("close", () => {
+  writeStream.on('close', () => {
     done();
   });
   readStream.pipe(writeStream);
