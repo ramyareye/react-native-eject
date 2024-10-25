@@ -6,8 +6,8 @@ Then according to [this discussion](https://github.com/facebook/react-native/iss
 ## Getting started
 
 ```sh
-yarn add react-native-eject
-react-native eject
+yarn add -D react-native-eject
+yarn react-native eject
 ```
 
 ## Compatibility
