@@ -1,10 +1,12 @@
 {
   "name": "react-native-eject",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "Single command to eject a React Native app",
-  "main": "index.js",
+  "main": "dist/eject.js",
+  "types": "dist/eject.d.ts",
   "scripts": {
-    "build": "NODE_ENV=production babel ./eject.js -d ./build"
+    "build": "tsc",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -23,10 +25,14 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-stage-2": "^6.24.1"
+    "@react-native-community/cli": "^15.0.0",
+    "@types/node": "^22.7.9",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.29.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
+    "typescript": "5.1.6"
   }
 }

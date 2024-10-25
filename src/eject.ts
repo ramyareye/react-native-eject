@@ -7,10 +7,13 @@
  * @format
  */
 
+// recovered from https://github.com/react-native-community/cli/pull/275
+
 import path from 'path';
 import fs from 'fs';
-import copyProjectTemplateAndReplace from '@react-native-community/cli/build/tools/generator/copyProjectTemplateAndReplace';
-import {logger} from '@react-native-community/cli-tools';
+import { logger } from '@react-native-community/cli-tools';
+
+import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace.js';
 
 /**
  * The eject command re-creates the `android` and `ios` native folders. Because native code can be
@@ -24,6 +27,22 @@ import {logger} from '@react-native-community/cli-tools';
  */
 
 function eject() {
+  const doesTemplateExist = fs.existsSync(
+    path.resolve('node_modules/@react-native-community/template'),
+  );
+  if (!doesTemplateExist) {
+    const pkgJson = require(path.resolve('package.json'));
+    const version = pkgJson.dependencies['react-native'] ?? 'VERSION';
+
+    logger.error(
+      'You need to install `@react-native-community/template@' +
+        version +
+        '` ' +
+        'before ejecting.',
+    );
+    process.exit(1);
+  }
+
   const doesIOSExist = fs.existsSync(path.resolve('ios'));
   const doesAndroidExist = fs.existsSync(path.resolve('android'));
   if (doesIOSExist && doesAndroidExist) {
@@ -37,12 +56,10 @@ function eject() {
   let appConfig = null;
   try {
     appConfig = require(path.resolve('app.json'));
-  } catch (e) {
+  } catch {
     logger.error(
       'Eject requires an `app.json` config file to be located at ' +
-        `${path.resolve(
-          'app.json',
-        )}, and it must at least specify a \`name\` for the project ` +
+        `${path.resolve('app.json')}, and it must at least specify a \`name\` for the project ` +
         "name, and a `displayName` for the app's home screen label.",
     );
     process.exit(1);
@@ -66,12 +83,12 @@ function eject() {
     process.exit(1);
   }
 
-  const templateOptions = {displayName};
+  const templateOptions = { displayName };
 
   if (!doesIOSExist) {
     logger.info('Generating the iOS folder.');
     copyProjectTemplateAndReplace(
-      path.resolve('node_modules', 'react-native', 'template', 'ios'),
+      path.resolve('node_modules', '@react-native-community/template', 'template', 'ios'),
       path.resolve('ios'),
       appName,
       templateOptions,
@@ -81,7 +98,7 @@ function eject() {
   if (!doesAndroidExist) {
     logger.info('Generating the Android folder.');
     copyProjectTemplateAndReplace(
-      path.resolve('node_modules', 'react-native', 'template', 'android'),
+      path.resolve('node_modules', '@react-native-community/template', 'template', 'android'),
       path.resolve('android'),
       appName,
       templateOptions,
