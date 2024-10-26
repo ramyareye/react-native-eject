@@ -14,7 +14,7 @@ yarn react-native eject
 
 | `react-native-eject` | `@react-native-community/cli`                                    | `react-native` |
 | -------------------- | ---------------------------------------------------------------- | -------------- |
-| ^1.0.0               | [^15.0.0](https://github.com/react-native-community/cli)         | ^0.75.0        |
+| ^1.0.1               | [^15.0.0](https://github.com/react-native-community/cli)         | ^0.75.0        |
 | ^0.2.0               | [^9.0.0](https://github.com/react-native-community/cli/tree/9.x) | ^0.70.0        |
 | ^0.1.2               | [^8.0.0](https://github.com/react-native-community/cli/tree/8.x) | ^0.69.0        |
 

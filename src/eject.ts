@@ -11,9 +11,10 @@
 
 import path from 'path';
 import fs from 'fs';
+import semver from 'semver';
 import { logger } from '@react-native-community/cli-tools';
 
-import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace.js';
+import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace';
 
 /**
  * The eject command re-creates the `android` and `ios` native folders. Because native code can be
@@ -26,21 +27,42 @@ import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace.js';
  * - `displayName` - The app's name on the home screen
  */
 
-function eject() {
-  const doesTemplateExist = fs.existsSync(
-    path.resolve('node_modules/@react-native-community/template'),
-  );
-  if (!doesTemplateExist) {
-    const pkgJson = require(path.resolve('package.json'));
-    const version = pkgJson.dependencies['react-native'] ?? 'VERSION';
+const pkgJson = require(path.resolve('package.json'));
+const version = pkgJson.dependencies['react-native'];
 
-    logger.error(
-      'You need to install `@react-native-community/template@' +
-        version +
-        '` ' +
-        'before ejecting.',
+function eject() {
+  // From RN 0.75, react-native team have moved template to
+  // https://github.com/react-native-community/template
+  const is75OrAbove = semver.lt('0.75.0', semver.coerce(version)!);
+
+  if (is75OrAbove) {
+    const doesTemplateExist = fs.existsSync(
+      path.resolve('node_modules/@react-native-community/template'),
     );
-    process.exit(1);
+
+    if (!doesTemplateExist) {
+      logger.error(
+        'You need to install `@react-native-community/template@' + version + '` before ejecting.',
+      );
+      process.exit(1);
+    }
+
+    const templateVersion = semver.coerce(
+      pkgJson.dependencies['@react-native-community/template'],
+    )!;
+
+    if (!semver.eq(version, templateVersion)) {
+      logger.error(
+        'Version mismatch detected! Your `react-native` version is ' +
+          version +
+          ', while your `@react-native-community/template` version is ' +
+          templateVersion +
+          '. Please install `@react-native-community/template@' +
+          version +
+          '` to ensure compatibility.',
+      );
+      process.exit(1);
+    }
   }
 
   const doesIOSExist = fs.existsSync(path.resolve('ios'));
@@ -88,7 +110,12 @@ function eject() {
   if (!doesIOSExist) {
     logger.info('Generating the iOS folder.');
     copyProjectTemplateAndReplace(
-      path.resolve('node_modules', '@react-native-community/template', 'template', 'ios'),
+      path.resolve(
+        'node_modules',
+        is75OrAbove ? '@react-native-community/template' : 'react-native',
+        'template',
+        'ios',
+      ),
       path.resolve('ios'),
       appName,
       templateOptions,
@@ -98,7 +125,12 @@ function eject() {
   if (!doesAndroidExist) {
     logger.info('Generating the Android folder.');
     copyProjectTemplateAndReplace(
-      path.resolve('node_modules', '@react-native-community/template', 'template', 'android'),
+      path.resolve(
+        'node_modules',
+        is75OrAbove ? '@react-native-community/template' : 'react-native',
+        'template',
+        'android',
+      ),
       path.resolve('android'),
       appName,
       templateOptions,

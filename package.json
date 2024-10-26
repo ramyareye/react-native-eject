@@ -1,6 +1,6 @@
 {
   "name": "react-native-eject",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Single command to eject a React Native app",
   "main": "dist/eject.js",
   "types": "dist/eject.d.ts",
@@ -33,6 +33,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.3.3",
+    "semver": "^7.6.3",
     "typescript": "5.1.6"
   }
 }
