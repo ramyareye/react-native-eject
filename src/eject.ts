@@ -48,7 +48,7 @@ function eject() {
     }
 
     const templateVersion = semver.coerce(
-      pkgJson.dependencies['@react-native-community/template'],
+      pkgJson.dependencies['@react-native-community/template'] ?? pkgJson.devDependencies['@react-native-community/template'],
     )!;
 
     if (!semver.eq(version, templateVersion)) {
